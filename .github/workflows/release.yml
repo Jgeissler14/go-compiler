@@ -1,10 +1,12 @@
 name: Build and Release
 
 on:
-  workflow_dispatch:
   push:
     tags:
-      - 'v*.*'  # Triggers the action on version tags (e.g., v1.0.0)
+      - 'v*.*.*'  # Triggers the action on version tags (e.g., v1.0.0)
+
+permissions:
+  contents: write  # Ensure the token can access repository content
 
 jobs:
   build:
@@ -15,18 +17,18 @@ jobs:
       uses: actions/checkout@v3
 
     - name: Set up Go
-      uses: actions/setup-go@v5
+      uses: actions/setup-go@v4
       with:
-        go-version: '1.21'  # Use the Go version you need
+        go-version: '1.20'  # Specify your Go version
 
     - name: Build
       working-directory: ./src/monkey  # Set the working directory to src/monkey
       run: |
         go mod download  # Download dependencies
-        go build -o monkey .  # Build your binary (replace 'monkey' with your binary name)
+        go build -o monkey .  # Build your binary and name it 'monkey'
 
     - name: Archive binary
-      working-directory: ./src/monkey  # Set the working directory for archiving
+      working-directory: ./src/monkey
       run: zip monkey.zip monkey  # Compress the binary for release
 
     - name: Create Release
@@ -35,8 +37,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.ref }}
+        tag_name: ${{ github.ref }}  # Use the correct tag reference for release
+        release_name: Release ${{ github.ref }}  # Name the release based on the tag
         draft: false
         prerelease: false
 
@@ -44,7 +46,7 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./src/monkey/monkey.zip  # Use the full path for the asset
+        asset_path: ./src/monkey/monkey.zip  # Path to the archived binary
         asset_name: monkey.zip
         asset_content_type: application/zip
 
