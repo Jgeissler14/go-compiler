@@ -23,7 +23,7 @@ jobs:
       working-directory: ./src/monkey  # Set the working directory to src/monkey
       run: |
         go mod download  # Download dependencies
-        go build -o monkey ./...  # Build your binary (replace 'monkey' with your binary name)
+        go build -o monkey .  # Build your binary (replace 'monkey' with your binary name)
 
     - name: Archive binary
       working-directory: ./src/monkey  # Set the working directory for archiving
