@@ -17,7 +17,7 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
       - name: Install dependencies
-        run: go install ./src/monkey/
+        run: cd src/monkey && go install .
       - name: Test with Go
         run: cd ./src/monkey &&  go test ./... -json > TestResults-${{ matrix.go-version }}.json
       - name: Upload Go test results
