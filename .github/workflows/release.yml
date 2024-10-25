@@ -1,0 +1,49 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers the action on version tags (e.g., v1.0.0)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'  # Use the Go version you need
+
+    - name: Build
+      working-directory: ./src/monkey  # Set the working directory to src/monkey
+      run: |
+        go mod download  # Download dependencies
+        go build -o monkey ./...  # Build your binary (replace 'monkey' with your binary name)
+
+    - name: Archive binary
+      working-directory: ./src/monkey  # Set the working directory for archiving
+      run: zip monkey.zip monkey  # Compress the binary for release
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./src/monkey/monkey.zip  # Use the full path for the asset
+        asset_name: monkey.zip
+        asset_content_type: application/zip
+
