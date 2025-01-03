@@ -1,11 +1,12 @@
-name: Build and Release
+name: build and release
 
 on:
   workflow_dispatch:
   push:
     tags:
-      - 'v*.*'  # Triggers the action on version tags (e.g., v1.0.0)
-
+      - 'v*.*'
+    
+  
 permissions:
   contents: write  # Ensure the token can access repository content
 
@@ -25,8 +26,8 @@ jobs:
     - name: Build
       working-directory: ./src/monkey  # Set the working directory to src/monkey
       run: |
-        go mod download  # Download dependencies
-        go build -o monkey .  # Build your binary and name it 'monkey'
+        go mod download  
+        go build -o monkey . 
 
     - name: Archive binary
       working-directory: ./src/monkey
@@ -52,5 +53,3 @@ jobs:
         asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Provide the token here
-
-
