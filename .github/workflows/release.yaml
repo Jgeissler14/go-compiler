@@ -4,9 +4,8 @@ on:
   workflow_dispatch:
   push:
     tags:
-      - 'v*.*'
-    
-  
+      - 'v*.*'  # Triggers the action on version tags (e.g., v1.0.0)
+
 permissions:
   contents: write  # Ensure the token can access repository content
 
@@ -53,3 +52,5 @@ jobs:
         asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Provide the token here
+
+
