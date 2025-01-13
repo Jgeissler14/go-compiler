@@ -8,12 +8,12 @@ import (
 )
 
 func main() {
-	user, err := user.Current()
-	if err != nil {
+	if currentUser, err := user.Current(); err != nil {
 		panic(err)
+	} else {
+		fmt.Printf("Hello %s! This is the Monkey programming language!\n", currentUser.Username)
 	}
-	fmt.Printf("Hello %s! This is the Monkey programming language!\n",
-		user.Username)
-	fmt.Printf("Feel free to type in commands\n")
+
+	fmt.Println("Feel free to type in commands")
 	repl.Start(os.Stdin, os.Stdout)
 }
